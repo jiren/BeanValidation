@@ -1,0 +1,96 @@
+           ==============================  Bean Validation Framework =====================================
+ 
+     Light weight Annotation base bean validation framework in which user can  plug own custom validator easily.
+     Requirement : Java 1.5 and later, No other library required.                        
+     In this framework validation annotation applied only to bean fields.
+ 
+     Sample bean validation code using this framework. :
+             
+      public class MyBean {
+ 
+           @MaxLength(value = 10, message = "MaxLength of name field is 10.")
+           private String name;       
+           @Email(message="Please Enter valid email in format abc@xyz.com")
+           private String email;
+ 
+           public String getEmail() {
+                return email;
+           }
+ 
+           public void setEmail(String email) {
+                this.email = email;
+           }
+ 
+           public String getName() {
+                 return name;
+           }
+ 
+           public void setName(String name) {
+                this.name = name;
+           }
+ 
+ 
+           public static void main(String[] args) {
+                                   
+                 MyBean myBean = new MyBean();
+                 myBean.setName("name");
+                 myBean.setEmail("abc@xyz.com");
+      
+                //Validation
+                VMessages vm = ValidatorContext.validate(myBean);
+                //Print Validation Message
+                for (Iterator it = vm.getMessages().iterator(); it.hasNext();) {
+                         System.out.println(it.next());
+                }    
+            
+        }
+             
+              => Minimum length annotation implementation.Here @AValidation indicate which class going to validate annotated field.Also use to identify annotation is for validation or not.
+     
+        @AValidation(validator = com.validation.validators.MinLengthValidator.class)
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.FIELD)
+        public @interface MinLength {
+ 
+                  int value();
+                  String message();
+           }    
+ 
+       =>  IValidator interface : Here ' T ' field type which is going to validate an ' A' is validation annotation 
+              public interface IValidator<T,A extends Annotation> {
+ 
+                     public boolean  validate(T value, A annotation, VMessages validationMsges);
+              
+              }                                   
+ 
+   => Minimum length validator  implementation. Here VMessages is store constrain violation messages.
+ 
+      public class MinLengthValidator implements IValidator<String, MinLength> {
+             
+            public boolean validate(String value, MinLength aMinLength, VMessages validationMsg) {
+ 
+                      if (value != null) {
+                          if (value.length() < aMinLength.Value()) {
+                                 validationMsg.addMessage(aMinLength.Message());
+                               return false;
+                          }
+                      return true;
+                      }
+                      else{
+                          validationMsg.addMessage(aMinLength.Message());
+                            return false;
+                            }
+                  }
+    }
+ 
+------------------------------------------------------------------------------------------------------------------------
+ Design :
+ ------------------------------------------------------------------------------------------------------------------------
+          1.   Bean Validation and Validator Cache. :
+              – BeanValidator : This class used to validate bean using custom validators instance and annotation , and     their reflected getter method of bean field.
+              – ValidatorsCache : This class cache bean fields annotation their getter reflected method and custom Validator.For first time of any bean validation BeanValidator add bean fields annotation and getter method to ValidatorsCache so next time for that bean validation done fast. Same way register custom validators when first time annotated field is going to validate so no need to register validator class separately.
+ 
+          2. Custom Validator interface and marker annotation:
+             – AValidation annotation class : This is annotation is identify validation annotation.
+             – IValidator Interface : This interface implemented by custom validator. 
+
