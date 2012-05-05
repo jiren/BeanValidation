@@ -1,4 +1,4 @@
-           ==============================  Bean Validation Framework =====================================
+==============================  Bean Validation Framework =====================================
  
      Light weight Annotation base bean validation framework in which user can  plug own custom validator easily.
      Requirement : Java 1.5 and later, No other library required.                        
@@ -45,7 +45,7 @@
             
         }
              
-              => Minimum length annotation implementation.Here @AValidation indicate which class going to validate annotated field.Also use to identify annotation is for validation or not.
+=> Minimum length annotation implementation.Here @AValidation indicate which class going to validate annotated field.Also use to identify annotation is for validation or not.
      
         @AValidation(validator = com.validation.validators.MinLengthValidator.class)
         @Retention(RetentionPolicy.RUNTIME)
@@ -56,14 +56,14 @@
                   String message();
            }    
  
-       =>  IValidator interface : Here ' T ' field type which is going to validate an ' A' is validation annotation 
+=>  IValidator interface : Here ' T ' field type which is going to validate an ' A' is validation annotation 
               public interface IValidator<T,A extends Annotation> {
  
                      public boolean  validate(T value, A annotation, VMessages validationMsges);
               
               }                                   
  
-   => Minimum length validator  implementation. Here VMessages is store constrain violation messages.
+=> Minimum length validator  implementation. Here VMessages is store constrain violation messages.
  
       public class MinLengthValidator implements IValidator<String, MinLength> {
              
@@ -85,7 +85,7 @@
  
 ------------------------------------------------------------------------------------------------------------------------
  Design :
- ------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
           1.   Bean Validation and Validator Cache. :
               – BeanValidator : This class used to validate bean using custom validators instance and annotation , and     their reflected getter method of bean field.
               – ValidatorsCache : This class cache bean fields annotation their getter reflected method and custom Validator.For first time of any bean validation BeanValidator add bean fields annotation and getter method to ValidatorsCache so next time for that bean validation done fast. Same way register custom validators when first time annotated field is going to validate so no need to register validator class separately.
